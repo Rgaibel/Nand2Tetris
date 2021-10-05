@@ -1,0 +1,62 @@
+/**
+ */
+class Dinosaur {
+
+    field int location;                 // location of where the dinosaur is on the screen
+
+    /** Constructs a new Dino with the given location */
+    constructor Dinosaur new() {
+      let location = 0;
+      do draw(location);
+      return this;
+    }
+
+    function void draw(int loc) {
+      var int memAddress;
+      let memAddress = 16384+loc;
+      do Memory.poke(memAddress+0, 32256);
+      do Memory.poke(memAddress+32, -1280);
+      do Memory.poke(memAddress+64, -256);
+      do Memory.poke(memAddress+96, 3840);
+      do Memory.poke(memAddress+128, 32641);
+      do Memory.poke(memAddress+160, 1985);
+      do Memory.poke(memAddress+192, 1987);
+      do Memory.poke(memAddress+224, 8163);
+      do Memory.poke(memAddress+256, 6135);
+      do Memory.poke(memAddress+288, 2046);
+      do Memory.poke(memAddress+320, 2046);
+      do Memory.poke(memAddress+352, 1020);
+      do Memory.poke(memAddress+384, 408);
+      do Memory.poke(memAddress+416, 408);
+      do Memory.poke(memAddress+448, 136);
+      do Memory.poke(memAddress+480, 408);
+      return;
+}
+
+    /** Deallocates the object's memory. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+
+    /** Returns the dinosaur's top left edge. */
+    method int getLocation() {
+        return location;
+    }
+
+
+    /** moves the dinosaur up. */
+    method void jump() { 
+        let location = location - 4;
+        do draw(location);
+        return;
+    }
+
+    /** moves the dinosaur down. */
+    method void land() { 
+        let location = location + 4;
+        do draw(location);
+        return;
+    }
+}

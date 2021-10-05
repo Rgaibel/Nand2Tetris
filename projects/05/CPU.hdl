@@ -1,0 +1,76 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    And(a=instruction[15], b=instruction[4], out=loadD);
+	Not(in=instruction[15], out=notLoad);
+	Or(a=notLoad, b=instruction[5], out=loadA);//if msb is 0 or we're jumping to A register
+	
+	//A Register
+	ARegister(in=out1, load=loadA, out=outA, out[0..14]=addressM);
+	//D Register
+	DRegister(in=alu-output, load=loadD, out=outD);
+	
+	//first mux
+	Mux16(a=instruction, b=alu-output, sel=instruction[15], out=out1);
+	
+	//second mux
+	Mux16(a=outA, b=inM, sel=instruction[12], out=out2);
+	
+	ALU(x=outD, y=out2, zx=instruction[11], nx=instruction[10],
+	zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6],
+	zr=izro, ng=neg, out=alu-output, out=outM);
+	
+	//jumps
+	Or(a=izro, b=neg, out=notPositive);
+	Not(in=notPositive, out=isPositive);
+	And(a=instruction[0], b=isPositive, out=jgt);
+	And(a=instruction[1], b=izro, out=jeq);
+	And(a=instruction[2], b=neg, out=jlt);
+	Or(a=jgt, b=jeq, out=jmp1);
+	Or(a=jmp1, b=jlt, out=jmp2);
+	And(a=jmp2, b=instruction[15], out=jmp);
+	
+	//PC procedure:
+	PC(in=outA, load=jmp, inc=true, reset=reset, out[0..14]=pc);
+	
+	//writeM
+	And(a=instruction[3], b=instruction[15], out=writeM);
+}

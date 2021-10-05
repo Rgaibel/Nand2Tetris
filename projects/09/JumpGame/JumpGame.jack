@@ -1,0 +1,97 @@
+class JumpGame {
+	field int speed;
+	field Player player;
+	//field Obstacle obstacle;
+	field boolean collision;
+	field int count;
+	field boolean exists;
+	
+	constructor JumpGame new() {
+		do Screen.clearScreen();
+		let player = Player.new(0, 239, 16);
+		let speed = 10;
+		let collision = false;
+		let exists = true;
+		return this;
+		}
+		
+	
+   /** Disposes this game. */
+   method void dispose() {
+      do player.dispose();
+	  do obstacle.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+	
+	//speed starts at 50
+	method void run() {
+		var char key;
+		var Obstacle obstacle1, obstacle2, obstacle3;
+		let obstacle1 = Obstacle.new(479, 225, 30);
+		let obstacle2 = Obstacle.new(350, 225, 30);
+		let obstacle3 = Obstacle.new(200, 225, 30);
+		
+		while (~collision) {
+			while ((key = 0) & (~collision)) {
+				let key = Keyboard.keyPressed();
+				do moveCollide(obstacle1);
+				do moveCollide(obstacle2);
+				do moveCollide(obstacle3);
+				}
+
+			if (key = 32) {
+				let count = 0;
+				do player.jump();
+				while (count < 25) {
+					do moveCollide(obstacle1);
+					do moveCollide(obstacle2);
+					do moveCollide(obstacle3);
+					if (~exists){
+						do Sys.wait(speed);
+						}
+					let count = count + 1;
+				}
+				do player.land();
+			}
+			
+			while((~(key = 0)) & (~collision)) {
+				let key = Keyboard.keyPressed();
+				do moveCollide(obstacle1);
+				do moveCollide(obstacle2);
+				do moveCollide(obstacle3);
+			}
+			
+			if (collision) {
+				do Output.moveCursor(10,27);
+				do Output.printString("Game Over");
+			}
+		}
+		return;
+	}
+	
+	method boolean Collision(Obstacle obstacle) {
+		var int pX, pY, pS, obX, obY, obS;
+		let pX = player.getX();
+		let pY = player.getY();
+		let pS = player.getSize();
+		let obX = obstacle.getX();
+		let obY = obstacle.getY();
+		let obS = obstacle.getSize();
+		if ((((pX + pS) > obX) & ((pX + pS) < (obX + obS))) | ((pX > obX) & (pX < (obX + obS)))) {
+			if ((((pY + pS) > obY) & ((pY + pS) < (obY + obS))) | ((pY > obY) & (pY < (obY + obS)))) {
+				let collision = true;
+			}
+		}
+		return collision;
+	}
+	
+	method void moveCollide(Obstacle obstacle) {	
+		let speed = obstacle.move(speed);
+		do Collision(obstacle);
+		do Sys.wait(speed);
+		
+		return;
+	}
+		
+}

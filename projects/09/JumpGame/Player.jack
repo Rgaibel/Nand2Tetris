@@ -1,0 +1,119 @@
+class Player {
+	
+	field int x, y;// top left corner of player square
+	field int size;// length of player square in pixels
+	
+	
+	constructor Player new(int Ax, int Ay, int Asize) {
+		let x = Ax;
+		let y = Ay;
+		let size = Asize;
+		do draw();
+		return this;
+	}
+		
+	/** Disposes this Player. */
+	method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+   }
+   
+   	/** Draws the player on the screen. */
+    method void draw() {
+		var int memAddress;
+        do Screen.setColor(true);
+		let memAddress = (16384+(512*15));
+		do Memory.poke(memAddress+0, 32256);
+		do Memory.poke(memAddress+32, -1280);
+		do Memory.poke(memAddress+64, -256);
+		do Memory.poke(memAddress+96, 3840);
+		do Memory.poke(memAddress+128, 32641);
+		do Memory.poke(memAddress+160, 1985);
+		do Memory.poke(memAddress+192, 1987);
+		do Memory.poke(memAddress+224, 8163);
+		do Memory.poke(memAddress+256, 6135);
+		do Memory.poke(memAddress+288, 2046);
+		do Memory.poke(memAddress+320, 2046);
+		do Memory.poke(memAddress+352, 1020);
+		do Memory.poke(memAddress+384, 408);
+		do Memory.poke(memAddress+416, 408);
+		do Memory.poke(memAddress+448, 136);
+		do Memory.poke(memAddress+480, 408);
+        return;
+   }
+   
+   method int getRight() {
+	    return x + size;
+		}
+		
+	method int getBooty() {
+		return y + size;
+		}
+		
+	method void jump() {
+		var int memAddress;
+		do Screen.setColor(false);
+		do Screen.drawRectangle(x, y, x + size, y + size);
+		let y = y - 80;
+        do Screen.setColor(true);
+      let memAddress = (16384+(512*10));
+      do Memory.poke(memAddress+0, 32256);
+      do Memory.poke(memAddress+32, -1280);
+      do Memory.poke(memAddress+64, -256);
+      do Memory.poke(memAddress+96, 3840);
+      do Memory.poke(memAddress+128, 32641);
+      do Memory.poke(memAddress+160, 1985);
+      do Memory.poke(memAddress+192, 1987);
+      do Memory.poke(memAddress+224, 8163);
+      do Memory.poke(memAddress+256, 6135);
+      do Memory.poke(memAddress+288, 2046);
+      do Memory.poke(memAddress+320, 2046);
+      do Memory.poke(memAddress+352, 1020);
+      do Memory.poke(memAddress+384, 408);
+      do Memory.poke(memAddress+416, 408);
+      do Memory.poke(memAddress+448, 136);
+      do Memory.poke(memAddress+480, 408);
+        return;
+		}
+	
+	method void land() {
+		var int memAddress;
+		do Screen.setColor(false);
+		do Screen.drawRectangle(x, y, x + size, y + size);
+		let y = y + 80;
+		do Screen.setColor(true);
+      let memAddress = (16384+(512*15));
+      do Memory.poke(memAddress+0, 32256);
+      do Memory.poke(memAddress+32, -1280);
+      do Memory.poke(memAddress+64, -256);
+      do Memory.poke(memAddress+96, 3840);
+      do Memory.poke(memAddress+128, 32641);
+      do Memory.poke(memAddress+160, 1985);
+      do Memory.poke(memAddress+192, 1987);
+      do Memory.poke(memAddress+224, 8163);
+      do Memory.poke(memAddress+256, 6135);
+      do Memory.poke(memAddress+288, 2046);
+      do Memory.poke(memAddress+320, 2046);
+      do Memory.poke(memAddress+352, 1020);
+      do Memory.poke(memAddress+384, 408);
+      do Memory.poke(memAddress+416, 408);
+      do Memory.poke(memAddress+448, 136);
+      do Memory.poke(memAddress+480, 408);
+        return;
+		}
+		
+	method int getX(){
+		return x;
+		}
+		
+	method int getY(){
+		return y;
+		}
+		
+	method int getSize() {
+		return size;
+		}
+	}
+		
+		
+			

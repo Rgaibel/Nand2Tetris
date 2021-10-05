@@ -1,0 +1,19 @@
+	// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/Bit.hdl
+
+/**
+ * 1-bit register:
+ * If load[t] == 1 then out[t+1] = in[t]
+ *                 else out does not change (out[t+1] = out[t])
+ */
+
+CHIP Bit {
+    IN in, load;
+    OUT out;
+
+    PARTS:
+    Mux (a=loop, b=in, sel=load, out=Muxout); //if load=1 I export the out and I save the input (b) into the DFF 
+    DFF (in=Muxout, out=loop, out=out);       // (Data-flipflop), which will continue to cycle until the load is once again 1.
+}

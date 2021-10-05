@@ -1,0 +1,184 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+		
+		static boolean color;
+		static int screenStart, keyboardStart;
+		static Array twoToThe;
+		
+    /** Initializes the Screen. */
+    function void init() {
+		var int i;
+		
+		let color = true;
+		let screenStart = 16384;
+		let keyboardStart = 24576;
+		let twoToThe = Array.new(16);
+		let twoToThe[0] = 1;
+		//slide 22
+		let i = 0;
+		while(i < 16) {
+			let i = i + 1;
+			let twoToThe[i] = 2*twoToThe[i - 1];
+		}
+		return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+		var int i;
+		let i = screenStart;
+		while(i < keyboardStart) {	//cycle i through the entire screen
+			do Memory.poke(i, 0);	//set each picxel to white
+			let i = i + 1;	//incrememt i
+		}
+		return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true (as 1), white by false (as 0). */
+    function void setColor(boolean b) {
+		let color = b;
+		return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+		var int adrs, val, lastDigit;
+		let adrs =  screenStart + ((32 * y) + (x / 16));	//rememeber that the coordinates of the screen are 512*256 (a 32 munches by 16 munches) -- a munch is a trm we made to represent a 16 bits
+		let val = Memory.peek(adrs);
+		let lastDigit = x - ((x / 16) * 16);	//floor function	
+		
+		if(color) {	//if current color is black
+			let val = (val | (twoToThe[lastDigit]));	//sets the wanted pixel to black (1)
+		} else {	//current color is white
+			let val = (val & (~(twoToThe[lastDigit])));	//sets the wanted pixel to white(0)
+		}
+		do Memory.poke(adrs, val);
+		return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+		var int flippedSlope;
+
+		if(x1 = x2) {
+			do Screen.drawVertLine(x1, y1, y2);
+			return;
+		}
+		if(y1 = y2) {
+			do Screen.drawHorizLine(x1, x2, y1);
+			return;
+		}
+		//it's not veritcle or horizontal, so the line must be diagonal.
+		//not that the axis starts from the top of the screen and goes down
+		let flippedSlope = (x2-x1)/(y2-y1);	//the reason I say flipped, is because, as mentioned above, the axis starts from the top left corner, and the positive direction heads down
+		if(flippedSlope < 0) {//the genius of this is that i've split four individual cases into two	
+			if (x1 < x2){
+				do Screen.risingDiagonal(x1, y1, x2-x1, y2-y1, 0, 0);
+			}else {
+				do Screen.risingDiagonal(x2, y2, x1-x2, y1-y2, 0, 0);
+			}
+		} else {	//slope is positive draw '/'
+			if (x1 < x2){
+				do Screen.sinkingDiagonal(x1, y1, x2-x1, y2-y1, 0, 0);
+			}else {
+				do Screen.sinkingDiagonal(x2, y2, x1-x2, y1-y2, 0, 0);
+			}
+		}
+		return;
+	}
+	
+	function void risingDiagonal(int x, int y, int dx, int dy, int a, int b) { //this helper function draws a line from the bottom left ot the top right
+		var int diff;//slide 78
+		while((~(a > dx)) & (~(b < dy)))  {	
+			do Screen.drawPixel(x + a, y + b);
+			let diff = (a * dy) - (b * dx); //I wanted to see if I'm above or below the slope (slide 57)
+			if(diff < 0) { //if im above (remember flipped) then i want to decrease (move up) the next placed pixel
+				let b = b - 1;
+				let diff = diff - dx;
+			} else {	// if im' below, then I want to move the next pixel right
+				let a = a + 1;
+				let diff = diff + dy;
+			}
+		}
+		return;
+    }
+	
+	function void sinkingDiagonal(int x, int y, int dx, int dy, int a, int b) { //this helper function draws a line from the top left ot the bottom right
+		var int diff;
+		while((~(a > dx)) & (~(b > dy)))  {	//while there's more work to do
+			do Screen.drawPixel(x + a, y + b);
+			let diff = (a * dy) - (b * dx);
+			if(diff < 0) {
+				let a = a + 1;
+				let diff = diff + dy;
+			} else {	//going down (we're above)
+				let b = b + 1;
+				let diff = diff - dx;
+			}
+		}
+		return;
+    }
+		
+	function void drawVertLine(int x, int y1, int y2) {
+		var int temp;
+		if(y1 > y2) {
+			let temp = y1;
+			let y1 = y2;
+			let y2 = temp;
+		}
+		while(~(y1 > y2)) {
+			do Screen.drawPixel(x, y1);
+			let y1 = y1 + 1;
+		}
+		return;
+	}
+	
+	function void drawHorizLine(int x1, int x2, int y) {
+		var int temp;
+		if(x1 > x2) {
+			let temp = x1;
+			let x1 = x2;
+			let x2 = temp;
+		}
+		while(~(x1 > x2)) {
+			do Screen.drawPixel(x1, y);
+			let x1 = x1 + 1;
+		}
+		return;
+	}
+	
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+		while(y1 < y2) {
+			do Screen.drawHorizLine(x1, x2, y1);
+			let y1 = y1 + 1;
+		}
+		return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+	var int dy, x1, x2;
+	let dy = -r;   //this will make it symmetrical. I start with a negative radius. as I increase r, r^2 becomes smaller until it equals zero. At which point it will start to grow bigger
+	while(~(dy > r)) {	
+		let x1 = x - Math.sqrt(((r*r) - (dy*dy)));	//left point: (notice i subtract by the changing dy^2, (and notice that although dy may be negative, that the square is positive.)
+		let x2 = x + Math.sqrt(((r*r) - (dy*dy)));	//right point
+		do Screen.drawHorizLine(x1, x2, y + dy);
+		let dy = dy + 1;	//increase dy;
+	}
+	return;
+    }
+}

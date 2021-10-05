@@ -1,0 +1,286 @@
+function JumpGame.new 0
+push constant 5
+call Memory.alloc 1
+pop pointer 0
+call Screen.clearScreen 0
+pop temp 0
+push constant 0
+push constant 239
+push constant 16
+call Player.new 3
+pop this 1
+push constant 10
+pop this 0
+push constant 0
+pop this 2
+push constant 0
+not
+pop this 4
+push pointer 0
+return
+function JumpGame.dispose 0
+push argument 0
+pop pointer 0
+push this 1
+call Player.dispose 1
+pop temp 0
+call obstacle.dispose 0
+pop temp 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function JumpGame.run 4
+push argument 0
+pop pointer 0
+push constant 481
+push constant 225
+push constant 30
+call Obstacle.new 3
+pop local 1
+push constant 350
+push constant 225
+push constant 30
+call Obstacle.new 3
+pop local 2
+push constant 200
+push constant 225
+push constant 30
+call Obstacle.new 3
+pop local 3
+label WHILE_EXP0
+push this 2
+not
+not
+if-goto WHILE_END0
+label WHILE_EXP1
+push local 0
+push constant 0
+eq
+push this 2
+not
+and
+not
+if-goto WHILE_END1
+call Keyboard.keyPressed 0
+pop local 0
+push pointer 0
+push local 1
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 2
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 3
+call JumpGame.moveCollide 2
+pop temp 0
+goto WHILE_EXP1
+label WHILE_END1
+push local 0
+push constant 32
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+pop this 3
+push this 1
+call Player.jump 1
+pop temp 0
+label WHILE_EXP2
+push this 3
+push constant 25
+lt
+not
+if-goto WHILE_END2
+push pointer 0
+push local 1
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 2
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 3
+call JumpGame.moveCollide 2
+pop temp 0
+push this 4
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push this 0
+call Sys.wait 1
+pop temp 0
+label IF_FALSE1
+push this 3
+push constant 1
+add
+pop this 3
+goto WHILE_EXP2
+label WHILE_END2
+push this 1
+call Player.land 1
+pop temp 0
+label IF_FALSE0
+label WHILE_EXP3
+push local 0
+push constant 0
+eq
+not
+push this 2
+not
+and
+not
+if-goto WHILE_END3
+call Keyboard.keyPressed 0
+pop local 0
+push pointer 0
+push local 1
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 2
+call JumpGame.moveCollide 2
+pop temp 0
+push pointer 0
+push local 3
+call JumpGame.moveCollide 2
+pop temp 0
+goto WHILE_EXP3
+label WHILE_END3
+push this 2
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 10
+push constant 27
+call Output.moveCursor 2
+pop temp 0
+push constant 9
+call String.new 1
+push constant 71
+call String.appendChar 2
+push constant 97
+call String.appendChar 2
+push constant 109
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 79
+call String.appendChar 2
+push constant 118
+call String.appendChar 2
+push constant 101
+call String.appendChar 2
+push constant 114
+call String.appendChar 2
+call Output.printString 1
+pop temp 0
+label IF_FALSE2
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function JumpGame.Collision 6
+push argument 0
+pop pointer 0
+push this 1
+call Player.getX 1
+pop local 0
+push this 1
+call Player.getY 1
+pop local 1
+push this 1
+call Player.getSize 1
+pop local 2
+push argument 1
+call Obstacle.getX 1
+pop local 3
+push argument 1
+call Obstacle.getY 1
+pop local 4
+push argument 1
+call Obstacle.getSize 1
+pop local 5
+push local 0
+push local 2
+add
+push local 3
+gt
+push local 0
+push local 2
+add
+push local 3
+push local 5
+add
+lt
+and
+push local 0
+push local 3
+gt
+push local 0
+push local 3
+push local 5
+add
+lt
+and
+or
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 1
+push local 2
+add
+push local 4
+gt
+push local 1
+push local 2
+add
+push local 4
+push local 5
+add
+lt
+and
+push local 1
+push local 4
+gt
+push local 1
+push local 4
+push local 5
+add
+lt
+and
+or
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+not
+pop this 2
+label IF_FALSE1
+label IF_FALSE0
+push this 2
+return
+function JumpGame.moveCollide 0
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+call Obstacle.move 2
+pop this 0
+push pointer 0
+push argument 1
+call JumpGame.Collision 2
+pop temp 0
+push this 0
+call Sys.wait 1
+pop temp 0
+push constant 0
+return

@@ -1,0 +1,425 @@
+function Player.new 0
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+pop this 2
+push pointer 0
+call Player.draw 1
+pop temp 0
+push pointer 0
+return
+function Player.dispose 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function Player.draw 1
+push argument 0
+pop pointer 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push constant 16384
+push constant 512
+push constant 15
+call Math.multiply 2
+add
+pop local 0
+push local 0
+push constant 0
+add
+push constant 32256
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 32
+add
+push constant 1280
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 64
+add
+push constant 256
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 96
+add
+push constant 3840
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 128
+add
+push constant 32641
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 160
+add
+push constant 1985
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 192
+add
+push constant 1987
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 224
+add
+push constant 8163
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 256
+add
+push constant 6135
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1020
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 136
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Player.getRight 0
+push argument 0
+pop pointer 0
+push this 0
+push this 2
+add
+return
+function Player.getBooty 0
+push argument 0
+pop pointer 0
+push this 1
+push this 2
+add
+return
+function Player.jump 1
+push argument 0
+pop pointer 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 1
+push constant 80
+sub
+pop this 1
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push constant 16384
+push constant 512
+push constant 10
+call Math.multiply 2
+add
+pop local 0
+push local 0
+push constant 0
+add
+push constant 32256
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 32
+add
+push constant 1280
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 64
+add
+push constant 256
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 96
+add
+push constant 3840
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 128
+add
+push constant 32641
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 160
+add
+push constant 1985
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 192
+add
+push constant 1987
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 224
+add
+push constant 8163
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 256
+add
+push constant 6135
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1020
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 136
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Player.land 1
+push argument 0
+pop pointer 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 1
+push constant 80
+add
+pop this 1
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push constant 16384
+push constant 512
+push constant 15
+call Math.multiply 2
+add
+pop local 0
+push local 0
+push constant 0
+add
+push constant 32256
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 32
+add
+push constant 1280
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 64
+add
+push constant 256
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 96
+add
+push constant 3840
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 128
+add
+push constant 32641
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 160
+add
+push constant 1985
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 192
+add
+push constant 1987
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 224
+add
+push constant 8163
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 256
+add
+push constant 6135
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 2046
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1020
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 136
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 408
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Player.getX 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function Player.getY 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function Player.getSize 0
+push argument 0
+pop pointer 0
+push this 2
+return

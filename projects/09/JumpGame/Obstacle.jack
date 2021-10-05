@@ -1,0 +1,78 @@
+class Obstacle {
+
+	field int x, y;// screen location of obstacles top left corner
+	field int size;// length of this obstacle in pixels
+	field boolean hitWall;// returns true if obstacle hits wall
+	
+	/** Constructs a new obstacle with a given location and size. */
+	constructor Obstacle new(int Ax, int Ay, int Asize) {
+		let x = Ax;
+		let y = Ay;
+		let size = Asize;
+		do draw();
+		let hitWall = false;
+		return this;
+	}
+	
+	/** Disposes this obstacle. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+   }
+	
+	/** Draws the obstacle on the screen. */
+    method void draw() {
+		var int memAddress;
+		let memAddress = (16384+(512*13)+x);
+		do Memory.poke(memAddress+0, 0);
+	do Memory.poke(memAddress+32, 16385);
+	do Memory.poke(memAddress+64, 22785);
+	do Memory.poke(memAddress+96, 22817);
+	do Memory.poke(memAddress+128, 22829);
+	do Memory.poke(memAddress+160, 23853);
+	do Memory.poke(memAddress+192, 32047);
+	do Memory.poke(memAddress+224, 32559);
+	do Memory.poke(memAddress+256, 16190);
+	do Memory.poke(memAddress+288, 7740);
+	do Memory.poke(memAddress+320, 7196);
+	do Memory.poke(memAddress+352, 7180);
+	do Memory.poke(memAddress+384, 7180);
+	do Memory.poke(memAddress+416, 7180);
+	do Memory.poke(memAddress+448, 7180);
+	do Memory.poke(memAddress+480, 7180);
+		return;
+	}
+   
+    method int move(int speed){
+		if (x > 1) {
+			do Screen.setColor(false);
+			do Screen.drawRectangle((x + size) - 1, y, x + size, y + size);//cuts off the left most sliver of the square by drawing it white
+			let x = x - 2;
+			do Screen.setColor(true);
+			do Screen.drawRectangle(x, y, x + 1, y + size);
+		}
+		else {
+			do Screen.setColor(false);
+			do Screen.drawRectangle(x, y, x + size, y + size);
+			let x = 481;
+			let y = 225;
+			if (speed > 1){
+				let speed = speed -1;
+			}
+		}
+		
+      return speed;
+   }
+   
+    method int getX(){
+		return x;
+		}
+		
+	method int getY(){
+		return y;
+		}
+	
+	method int getSize() {
+		return size;
+		}		
+   }

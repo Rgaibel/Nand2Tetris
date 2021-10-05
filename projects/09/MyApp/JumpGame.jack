@@ -1,0 +1,105 @@
+class JumpGame {
+	field int speed;
+	field Player player;
+	field boolean collision;
+	field int count;
+	field int score;
+	
+	constructor JumpGame new() {
+		var Obstacle obstacle;
+		do Screen.clearScreen();
+		let player = Player.new(0, 239, 16);
+		let speed = 8;
+		let collision = false;
+		let score = 0;
+		return this;
+		}
+		
+	
+   /** Disposes this game. */
+   method void dispose() {
+      do player.dispose();
+	  do obstacle.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+	
+	//speed starts at 50
+	method void run() {
+		var char key;
+		var Obstacle obstacle1, obstacle2, obstacle3;
+		let obstacle1 = Obstacle.new(481, 225, 30);
+		let obstacle2 = Obstacle.new(350, 225, 30);
+		let obstacle3 = Obstacle.new(200, 225, 30);
+		
+		while (~collision) {
+			while ((key = 0) & (~collision)) {
+				let key = Keyboard.keyPressed();
+				do moveCollide(obstacle1);
+				do moveCollide(obstacle2);
+				do moveCollide(obstacle3);
+				}
+
+			if (key = 32) {
+				let count = 0;
+				do player.jump();
+				while (count < 27) {
+					do moveCollide(obstacle1);
+					do moveCollide(obstacle2);
+					do moveCollide(obstacle3);
+					let count = count + 1;
+				}
+				do player.land();
+			}
+			
+			while((~(key = 0)) & (~collision)) {
+				let key = Keyboard.keyPressed();
+				do moveCollide(obstacle1);
+				do moveCollide(obstacle2);
+				do moveCollide(obstacle3);
+			}
+			
+			if (collision) {
+				do Screen.clearScreen();
+				do Output.moveCursor(10,24);
+				do Output.printString("G A M E  O V E R");
+				do Output.moveCursor(12,27);
+				do Output.printString("Score: ");
+				do Output.printInt(score);
+			}
+		}
+		return;
+	}
+	
+	method boolean Collision(Obstacle obstacle) {
+		var int pX, pY, pS, pA, pB, obX, obY, obS, obA, obB;
+		let pX = player.getX();
+		let pY = player.getY();
+		let pS = player.getSize();
+		let pA = pX + pS;
+		let pB = pY + pS;
+		let obX = obstacle.getX();
+		let obY = obstacle.getY();
+		let obS = obstacle.getSize();
+		let obA = obX + obS;
+		let obB = obY + obS;
+		if (((pA > obX) & ((pA < obA)) | ((pX > obX) & (pX < obA)))) {
+			if (((pB > obY) & (pB < obB)) | ((pY > obY) & (pY < obB))) {
+				let collision = true;
+			}
+		}
+		return collision;
+	}
+	
+	method void moveCollide(Obstacle obstacle) {	
+		let speed = obstacle.move(speed);
+		do Collision(obstacle);
+		do Sys.wait(speed);
+		let score = score + 1;
+		do Output.moveCursor(10, 0);
+		do Output.printInt(score);
+		
+		return;
+	}
+		
+}

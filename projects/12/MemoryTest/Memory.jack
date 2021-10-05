@@ -1,0 +1,93 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+
+	static Array ram, freeList;
+
+    /** Initializes the class. */
+    function void init() {
+		let ram = 0;
+		let freeList = 2048;	//I start the end of heap ( I say end because heaps memory moves upwards towards the stacks memory)
+		let freeList[0] = null;		//as with a LinkedList, the zero spot of the array will represent my pointer, which points to null initially
+		let freeList[1] = 14334;	//and the 1 spot of the array will represent the size the available or stored.
+		return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) { //getter
+		return ram[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) { //setter
+		let ram[address] = value; 
+		return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {	//first fit (53:00)
+		var Array prev, curr, newBlock;
+		let prev = null;
+		let curr = freeList;	//start beginning of curr at beginning of freeList
+		while(~(curr = null)) {	//cycle through segments inside the heap
+					
+				//I have two options: 1) the space needed is exactly the size available in the free block
+			if(curr[1] = size) {	
+				if(prev = null) {				//if at the head of the list
+					let freeList = curr[0];		//head = curr.next
+				} else {
+					let prev[0] = curr[0];		//prev.next = curr.next
+					let curr[0] = 0;			//curr.next = null
+				}
+				return curr + 2;				//return the first element in the array
+			}
+				//2) the other option is that I have the space I need plus two. (why plus two? ...
+				//  	so that I dont end up with single addresses that can never be filled. I must always have a size and a pointer available)
+			if(curr[1] > (size + 1)) {	
+						//I take the space that I need and modify the data of the free block and connected pointers
+				if(prev = null) {						//if curr is first segment in the list
+					let freeList = curr + size + 2;		//advance the head of the list
+					let freeList[1] = curr[1] - (size + 2);	//adjust the size available in the free block
+				} else {
+					let newBlock = curr + size + 2;			//make a new block from the old
+					let prev[0] = newBlock;					//prev.next = newBlock (take curr out of list)
+					let newBlock[0] = curr[0];				//newBlock.next = curr.next
+					let curr[0] = null;						//curr.next = null
+					let newBlock[1] = curr[1] - (size + 2);	//new.size = curr.size - (size+2)
+				}
+					let curr[1] = size;	//I allocate the size my new object will take
+					return curr + 2;
+			}
+			//else I advance to the next free block
+			let prev = curr;
+			let curr = curr[0];	//curr = curr.next
+		}
+		return null;	//no room
+	}
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+		var Array curr;
+		let curr = freeList;
+		
+		while(~(curr = null)) {		// go all the way to the end of my freeList.
+			if(curr[0] = 0) {		// when I get to the end
+				let curr[0] = o;	// I add o
+				let o[0] = null;	// and I point o to null ( o is now the end)
+			}
+			let curr = curr[0];		//advance my curr
+		}
+		
+		return;
+    }    
+}
